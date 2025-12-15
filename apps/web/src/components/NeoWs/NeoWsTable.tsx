@@ -1,4 +1,4 @@
-import type { AsteroidPreview, NeoWsResponse } from "../../types/neoWs"
+import type { AsteroidPreview } from "../../types/neoWs"
 
 interface NeoWsTableProps {
     items: AsteroidPreview[] | null

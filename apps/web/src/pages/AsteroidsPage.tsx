@@ -19,7 +19,7 @@ export default function AsteroidsPage() {
 
     // Pagination state
     const [page, setPage] = useState(1);
-    const [size, setSize] = useState(20);
+    const [size] = useState(20);
 
     // Modal state
     const [selectedId, setSelectedId] = useState<string | null>(null);
