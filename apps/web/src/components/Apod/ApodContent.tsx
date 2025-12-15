@@ -1,4 +1,4 @@
-import type { Apod } from '../types/apod';
+import type { Apod } from '../../types/apod';
 
 interface ApodContentProps {
     data: Apod;

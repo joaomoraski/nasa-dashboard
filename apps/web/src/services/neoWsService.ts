@@ -1,23 +1,26 @@
-import type { Apod } from '../types/apod';
+import type { NeoWsResponse } from '../types/neoWs';
 import { API_URL } from '../config/api';
 
-export interface NeoWsServiceError {
-    message: string;
-}
-
 /**
- * Fetches APOD data from the API
+ * Fetches NeoWs list data from the API
  */
-export async function fetchNeoWs(startDate?: string, endDate?: string): Promise<Apod> {
+export async function fetchNeoWsList(
+    startDate: string,
+    endDate: string,
+    page: number = 1,
+    size: number = 20,
+    q?: string
+): Promise<NeoWsResponse> {
     const params = new URLSearchParams();
-    if (startDate) {
-        params.set("start_date", startDate);
-    }
-    if (endDate) {
-        params.set("end_date", endDate);
+    params.set("start_date", startDate);
+    params.set("end_date", endDate);
+    params.set("page", page.toString());
+    params.set("size", size.toString());
+    if (q?.trim()) {
+        params.set("q", q.trim());
     }
 
-    const resp = await fetch(`${API_URL}/api/apod?${params.toString()}`);
+    const resp = await fetch(`${API_URL}/api/asteroids?${params.toString()}`);
     const body = await resp.json();
 
     if (!resp.ok) {
@@ -27,3 +30,20 @@ export async function fetchNeoWs(startDate?: string, endDate?: string): Promise<
     return body;
 }
 
+/**
+ * Fetches NeoWs detail data by ID from the API
+ */
+export async function fetchNeoWsDetail(id: string): Promise<any> {
+    if (!id) {
+        throw new Error('Asteroid ID is required');
+    }
+
+    const resp = await fetch(`${API_URL}/api/asteroids/${id}`);
+    const body = await resp.json();
+
+    if (!resp.ok) {
+        throw new Error(body?.error ?? 'Unknown error');
+    }
+
+    return body;
+}

@@ -5,6 +5,7 @@ import { toRow } from '../utils/pagination';
 const NASA_API_BASE_URL = 'https://api.nasa.gov';
 const NASA_PLANETARY_BASE_URL = `${NASA_API_BASE_URL}/planetary/apod`;
 const NASA_NEO_WS_BASE_URL = `${NASA_API_BASE_URL}/neo/rest/v1/feed`;
+const NASA_NEO_WS_ID_BASE_URL = `${NASA_API_BASE_URL}/neo/rest/v1/neo`;
 const REQUEST_TIMEOUT_MS = 8000;
 
 /**
@@ -50,7 +51,7 @@ export async function fetchAsteroidById(apiKey: string, id: string): Promise<any
     if (!id) {
         throw new ApiError(400, 'Asteroid ID is required');
     }
-    const url = new URL(NASA_NEO_WS_BASE_URL);
+    const url = new URL(NASA_NEO_WS_ID_BASE_URL);
     url.searchParams.set('api_key', apiKey);
     url.pathname += `/${id}`;
 

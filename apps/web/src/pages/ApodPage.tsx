@@ -1,6 +1,6 @@
 import { useApod } from '../hooks/useApod';
-import { ApodForm } from '../components/ApodForm';
-import { ApodContent } from '../components/ApodContent';
+import { ApodForm } from '../components/Apod/ApodForm';
+import { ApodContent } from '../components/Apod/ApodContent';
 import { ErrorMessage } from '../components/ErrorMessage';
 
 /**
