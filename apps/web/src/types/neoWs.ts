@@ -24,3 +24,20 @@ export type NeoWsResponse = {
     meta: Meta;
     items: AsteroidPreview[];
 }
+
+export type NasaImage = {
+    nasa_id: string;
+    href: string;
+    date_created: string;
+    description: string;
+    description_508: string;
+    keywords: string[];
+    media_type: string;
+    title: string;
+    photographer: string;
+}
+
+export type NasaImagesResponse = {
+    meta: Meta;
+    paginated: NasaImage[];
+}

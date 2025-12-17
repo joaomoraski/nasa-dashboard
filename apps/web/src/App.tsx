@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import ApodPage from './pages/ApodPage'
 import { Navigation } from './components/Navigation'
 import AsteroidsPage from './pages/AsteroidsPage'
+import NasaImagesPage from './pages/NasaImagesPage'
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/apod" replace />}/>
         <Route path="/apod" element={<ApodPage />}/>
+        <Route path="/images" element={<NasaImagesPage />}/>
         <Route path="/asteroids" element={<AsteroidsPage />}/>
       </Routes>
     </div>

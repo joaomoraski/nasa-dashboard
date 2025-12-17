@@ -10,5 +10,11 @@
   },
   "devDependencies": {
     "concurrently": "^9.2.1"
+  },
+  "dependencies": {
+    "@headlessui/react": "^2.2.9",
+    "@heroicons/react": "^2.2.0",
+    "@tailwindcss/vite": "^4.1.18",
+    "tailwind": "^4.0.0"
   }
 }
