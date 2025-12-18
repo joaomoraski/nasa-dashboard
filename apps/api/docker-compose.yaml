@@ -1,0 +1,15 @@
+services:
+  postgres-nasa-dashboard:
+    container_name: postgres-nasa-dashboard
+    image: postgres:15
+    ports:
+      - 5432:5432
+    volumes:
+      - nasa-dashboard:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=nasa-dashboard
+
+volumes:
+  nasa-dashboard:
