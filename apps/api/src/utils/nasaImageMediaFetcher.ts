@@ -12,7 +12,7 @@ export async function fetchNasaImageMedia(href: string): Promise<any> {
             const body = await response.text();
             throw new ApiError(response.status, `NASA error: ${body}`);
         }
-        const data = await response.json();
+        const data = await response.json() as string[];
         for (let item of data) {
             if (item && item.includes('small')) {
                 if (item.includes(' ')) {
