@@ -105,7 +105,11 @@ export async function fetchNeoWs(apiKey: string, startDate?: string, endDate?: s
             throw new ApiError(resp.status, `NASA error: ${body}`);
         }
 
-        const data = await resp.json();
+        const data = await resp.json() as {
+            near_earth_objects?: Record<string, any[]>;
+            links?: any;
+            element_count?: number;
+        };
     
         const byDate = data.near_earth_objects ?? {};
         const all = Object.entries(byDate).flatMap(([date, neos]) =>
