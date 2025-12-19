@@ -13,15 +13,7 @@ export async function fetchNasaImageMedia(href: string): Promise<any> {
             throw new ApiError(response.status, `NASA error: ${body}`);
         }
         const data = await response.json();
-        for (let item of data) {
-            if (item && item.includes('small')) {
-                if (item.includes(' ')) {
-                    return item.replaceAll(' ', '%20');
-                }
-                return item;
-            }
-        }
-        return "";
+        return encodeURI(data.find((item: string) => item.includes("small")) ?? "");
     } catch (error) {
         throw new ApiError(500, `Error fetching NASA image media: ${error}`);
     }

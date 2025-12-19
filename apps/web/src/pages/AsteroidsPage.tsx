@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { Meta } from "../types/neoWs";
 import { useNeoWsList } from "../hooks/useNeoWsList";
 import { useNeoWsDetail } from "../hooks/useNeoWsDetail";
@@ -13,9 +13,10 @@ function formatNumber(n: number | null, suffix = "") {
 
 export default function AsteroidsPage() {
     // Filters state
-    const [startDate, setStartDate] = useState("2025-12-14");
-    const [endDate, setEndDate] = useState("2025-12-15");
+    const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
+    const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
     const [q, setQ] = useState("");
+    const [validationError, setValidationError] = useState<string | null>(null);
 
     // Pagination state
     const [page, setPage] = useState(1);
@@ -25,13 +26,9 @@ export default function AsteroidsPage() {
     const [selectedId, setSelectedId] = useState<string | null>(null);
 
     // Use hooks for data fetching
-    const { data: response, loading, error } = useNeoWsList(startDate, endDate, page, size, q);
+    const { data: response, loading, error, loadNeoWsList } = useNeoWsList();
     const { data: detailResponse, loading: detailLoading, error: detailError } = useNeoWsDetail(selectedId);
 
-    // Reset page when filters change
-    useEffect(() => {
-        setPage(1);
-    }, [startDate, endDate, q]);
 
     const items = response?.items ?? [];
     const meta: Meta = response?.meta ?? {
@@ -55,10 +52,20 @@ export default function AsteroidsPage() {
                 startDate={startDate}
                 endDate={endDate}
                 q={q}
+                size={size}
                 setStartDate={setStartDate}
                 setEndDate={setEndDate}
                 setQ={setQ}
+                validationError={validationError}
+                setValidationError={setValidationError}
+                setPage={setPage}
+                loadNeoWsList={loadNeoWsList}
             />
+
+            {/* Validation Error */}
+            {validationError && (
+                <p style={{ color: "tomato", marginTop: 8 }}>{validationError}</p>
+            )}
 
             {/* Loading / Error */}
             {loading && <p>Loading...</p>}
@@ -72,12 +79,16 @@ export default function AsteroidsPage() {
             />
 
             {/* Pagination */}
-            {meta && (
+            {meta && response && (
                 <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
                     <button
                         type="button"
                         disabled={!canPrev}
-                        onClick={() => setPage((p) => Math.max(1, p - 1))}
+                        onClick={() => {
+                            const newPage = Math.max(1, page - 1);
+                            setPage(newPage);
+                            loadNeoWsList(startDate, endDate, newPage, size, q);
+                        }}
                     >
                         Prev
                     </button>
@@ -89,7 +100,11 @@ export default function AsteroidsPage() {
                     <button
                         type="button"
                         disabled={!canNext}
-                        onClick={() => setPage((p) => p + 1)}
+                        onClick={() => {
+                            const newPage = page + 1;
+                            setPage(newPage);
+                            loadNeoWsList(startDate, endDate, newPage, size, q);
+                        }}
                     >
                         Next
                     </button>

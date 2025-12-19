@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import type { Apod } from '../types/apod';
 import { fetchApod } from '../services/apodService';
 
@@ -17,7 +17,7 @@ export function useApod(): UseApodReturn {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const loadApod = useCallback(async (selectedDate?: string) => {
+    const loadApod = async (selectedDate?: string) => {
         setLoading(true);
         setError(null);
 
@@ -30,12 +30,7 @@ export function useApod(): UseApodReturn {
         } finally {
             setLoading(false);
         }
-    }, []);
-
-    // Load on mount
-    useEffect(() => {
-        loadApod();
-    }, [loadApod]);
+    };
 
     return { data, loading, error, loadApod };
 }

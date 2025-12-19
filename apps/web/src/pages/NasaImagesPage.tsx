@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { Meta, NasaImage } from "../types/neoWs";
 import { useNasaImages } from "../hooks/useNasaImages";
 import ImageCard from "../components/NasaImages/ImageCard";
@@ -12,18 +12,30 @@ export default function NasaImagesPage() {
     const [page, setPage] = useState(1);
     const [size] = useState(20);
 
+    const [validationError, setValidationError] = useState<string | null>(null);
+
     // Use hooks for data fetching
-    const { data: response, loading, error } = useNasaImages(q, page, size);
+    const { data: response, loading, error, loadNasaImages } = useNasaImages(page, size);
 
-    // Reset page when filters change with debounce
-    useEffect(() => {
-        const timeoutId = setTimeout(() => {
-            setPage(1);
-        }, 500);
+    const handleClickSearch = () => {
+        // clear validation error
+        setValidationError(null);
 
-        return () => clearTimeout(timeoutId);
-    }, [q]);
+        if (!q.trim()) {
+            setValidationError("Please enter a search term");
+            return;
+        }
 
+        setPage(1);
+        loadNasaImages(q.trim());
+    }
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setQ(e.target.value);
+        if (validationError) {
+            setValidationError(null);
+        }
+    }
 
     const items: NasaImage[] = response?.paginated ?? [];
     const meta: Meta = response?.meta ?? {
@@ -42,20 +54,28 @@ export default function NasaImagesPage() {
         <div style={{ padding: 16 }}>
             <h2 className="text-2xl font-bold">Nasa Images</h2>
 
-            {/* Search Input */}
-            <div style={{ marginBottom: 16 }}>
-                <label>
-                    Search:
+            {/* Search Form */}
+            <form className="w-full max-w-sm">
+                <div className="flex items-center border-b border-teal-500 py-2">
                     <input
+                        className="appearence-once bg-transparent border-none w-full text-white mr-3 py-1 px-2 leading-tight focus:outline-none"
                         type="text"
-                        placeholder="Search images..."
+                        placeholder="Search images (e.g: Orion)"
+                        aria-label="Search images"
                         value={q}
-                        onChange={(e) => setQ(e.target.value)}
-                        style={{ marginLeft: 8, padding: 8, minWidth: 300 }}
+                        onChange={handleInputChange}
                     />
-                </label>
-            </div>
+                    <button className="flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded" 
+                        type="button" onClick={handleClickSearch}>
+                        Buscar
+                    </button>
+                </div>
+            </form>
 
+            {/* Validation Error */}
+            {validationError && (
+                <p style={{ color: "tomato", marginTop: 8 }}>{validationError}</p>
+            )}
             {/* Loading / Error */}
             {loading && <p>Loading...</p>}
             {error && <p style={{ color: "tomato" }}>Error: {error}</p>}

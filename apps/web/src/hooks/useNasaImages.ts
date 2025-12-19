@@ -2,24 +2,25 @@ import { useState, useEffect, useCallback } from 'react';
 import type { NasaImagesResponse } from '../types/neoWs';
 import { fetchNasaImages } from '../services/imageService';
 
-interface useNasaImagesReturn {
+interface NasaImagesReturn {
     data: NasaImagesResponse | null;
     loading: boolean;
     error: string | null;
+    loadNasaImages: (filter: string) => Promise<void>;
 }
 
 /**
- * Custom hook for fetching NeoWs detail data by ID
+ * Custom hook for fetching NASA images
  */
-export function useNasaImages(query: string | null, page: number = 1, size: number = 20): useNasaImagesReturn {
+export function useNasaImages(page: number = 1, size: number = 20): NasaImagesReturn {
     const [data, setData] = useState<any | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const loadNasaImages = useCallback(async (filter: string) => {
+    const loadNasaImages = async (filter: string) => {
         if (!filter) {
             setData(null);
-            setError(null);
+            setError("Please enter a search term");
             setLoading(false);
             return;
         }
@@ -36,24 +37,8 @@ export function useNasaImages(query: string | null, page: number = 1, size: numb
         } finally {
             setLoading(false);
         }
-    }, []);
+    };
 
-    // Debounce query to avoid requests on every keystroke
-    useEffect(() => {
-        if (!query) {
-            setData(null);
-            setError(null);
-            setLoading(false);
-            return;
-        }
-
-        const timeoutId = setTimeout(() => {
-            loadNasaImages(query);
-        }, 500);
-
-        return () => clearTimeout(timeoutId);
-    }, [query, loadNasaImages]);
-
-    return { data, loading, error };
+    return { data, loading, error, loadNasaImages };
 }
 
