@@ -1,4 +1,4 @@
-import { ApiError, NasaImage, NasaImagesApiResponse } from '../types';
+import { ApiError, NasaImage, NasaImagesApiResponse, NeoWsApiResponse } from '../types';
 import { daysBetween } from '../utils/date';
 import { fetchNasaImageMedia } from '../utils/nasaImageMediaFetcher';
 import { toRow } from '../utils/pagination';
@@ -105,15 +105,12 @@ export async function fetchNeoWs(apiKey: string, startDate?: string, endDate?: s
             throw new ApiError(resp.status, `NASA error: ${body}`);
         }
 
-        const data = await resp.json() as {
-            near_earth_objects?: Record<string, any[]>;
-            links?: any;
-            element_count?: number;
-        };
+        const json: any = await resp.json();
+        const data: NeoWsApiResponse = json;
     
-        const byDate = data.near_earth_objects ?? {};
+        const byDate: Record<string, any[]> = data.near_earth_objects ?? {};
         const all = Object.entries(byDate).flatMap(([date, neos]) =>
-            (neos as any[]).map(neo => toRow(neo, date))
+            neos.map(neo => toRow(neo, date))
         );
 
         let filtered = all;
@@ -185,7 +182,7 @@ export async function fetchNasaImages(filter: string, page: number, size: number
             const rawData = item.data?.[0];
             if (!rawData) return undefined;
             const media = await fetchNasaImageMedia(item.href);
-            return {
+            const image: NasaImage = {
                 nasa_id: rawData.nasa_id,
                 href: media,
                 date_created: rawData.date_created,
