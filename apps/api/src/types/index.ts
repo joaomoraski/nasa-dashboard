@@ -30,3 +30,9 @@ export type NasaImagesApiResponse = {
         items: NasaItem[];
     };
 };
+
+export type NeoWsApiResponse = {
+    near_earth_objects?: Record<string, any[]>;
+    links?: unknown;
+    element_count?: number;
+}
