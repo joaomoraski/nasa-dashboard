@@ -1,11 +1,13 @@
-import { ApiError } from '../types';
+import { ApiError, NasaImage, NasaImagesApiResponse } from '../types';
 import { daysBetween } from '../utils/date';
+import { fetchNasaImageMedia } from '../utils/nasaImageMediaFetcher';
 import { toRow } from '../utils/pagination';
 
 const NASA_API_BASE_URL = 'https://api.nasa.gov';
 const NASA_PLANETARY_BASE_URL = `${NASA_API_BASE_URL}/planetary/apod`;
 const NASA_NEO_WS_BASE_URL = `${NASA_API_BASE_URL}/neo/rest/v1/feed`;
 const NASA_NEO_WS_ID_BASE_URL = `${NASA_API_BASE_URL}/neo/rest/v1/neo`;
+const NASA_IMAGES_BASE_URL = `https://images-api.nasa.gov`;
 const REQUEST_TIMEOUT_MS = 8000;
 
 /**
@@ -150,3 +152,70 @@ export async function fetchNeoWs(apiKey: string, startDate?: string, endDate?: s
     }
 }
 
+
+export async function fetchNasaImages(filter: string, page: number, size: number): Promise<any> {
+    if (!filter) {
+        throw new ApiError(400, 'Filter is required');
+    }
+
+    const params = new URLSearchParams();
+    if (filter.trim()) {
+        params.set('q', filter.trim());
+    }
+
+    const url = new URL(`${NASA_IMAGES_BASE_URL}/search`);
+    url.search = params.toString();
+
+    const response = await fetch(url);
+    if (!response.ok) {
+        const body = await response.text();
+        throw new ApiError(response.status, `NASA error: ${body}`);
+    }
+
+
+    const data: NasaImagesApiResponse = await response.json();
+    const items = data.collection.items;
+
+    const nasaImages: NasaImage[] = (await Promise.all(
+        items.map(async (item) => {
+            const rawData = item.data?.[0];
+            if (!rawData) return undefined;
+            const media = await fetchNasaImageMedia(item.href);
+            return {
+                nasa_id: rawData.nasa_id,
+                href: media,
+                date_created: rawData.date_created,
+                description: rawData.description,
+                description_508: rawData.description_508,
+                keywords: rawData.keywords,
+                media_type: rawData.media_type,
+                title: rawData.title,
+                photographer: rawData.photographer,
+            };
+        })
+    )).filter((image): image is NasaImage => image !== undefined);
+
+    const total = nasaImages.length;
+    const pageNum = typeof page === "number" && page > 0 ? page : 1;
+    const pageSize = typeof size === "number" && size > 0 ? size : 10;
+
+    const totalPages = Math.ceil(total / pageSize);
+
+    const startIndex = (pageNum - 1) * pageSize;
+    const paginated = nasaImages.slice(startIndex, startIndex + pageSize);
+
+    const start = nasaImages.length > 0 ? startIndex + 1 : 0;
+    const end = startIndex + nasaImages.length;
+
+    return {
+        meta: {
+          page,
+          size,
+          total,
+          totalPages,
+          start,
+          end,
+        },
+        paginated,
+      };
+}

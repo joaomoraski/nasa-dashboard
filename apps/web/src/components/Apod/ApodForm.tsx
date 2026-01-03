@@ -1,7 +1,8 @@
-import { FormEvent, useState } from 'react';
+import { useState } from 'react';
+import type { FormEvent } from 'react';
 
 interface ApodFormProps {
-    onSubmit: (date: string) => void;
+    onSubmit: (date?: string) => void;
     loading: boolean;
 }
 
@@ -13,7 +14,7 @@ export function ApodForm({ onSubmit, loading }: ApodFormProps) {
 
     function handleSubmit(e: FormEvent) {
         e.preventDefault();
-        onSubmit(date);
+        onSubmit(date || undefined);
     }
 
     return (

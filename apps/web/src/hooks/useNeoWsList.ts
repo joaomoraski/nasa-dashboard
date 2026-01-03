@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import type { NeoWsResponse } from '../types/neoWs';
 import { fetchNeoWsList } from '../services/neoWsService';
 
@@ -11,19 +11,14 @@ interface UseNeoWsListReturn {
 
 /**
  * Custom hook for fetching NeoWs list data
+ * Call loadNeoWsList() manually via onClick or onSubmit
  */
-export function useNeoWsList(
-    startDate: string,
-    endDate: string,
-    page: number = 1,
-    size: number = 20,
-    q: string = ""
-): UseNeoWsListReturn {
+export function useNeoWsList(): UseNeoWsListReturn {
     const [data, setData] = useState<NeoWsResponse | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const loadNeoWsList = useCallback(async (
+    const loadNeoWsList = async (
         start: string,
         end: string,
         pageNum: number = 1,
@@ -42,12 +37,7 @@ export function useNeoWsList(
         } finally {
             setLoading(false);
         }
-    }, []);
-
-    // Load when params change
-    useEffect(() => {
-        loadNeoWsList(startDate, endDate, page, size, q);
-    }, [loadNeoWsList, startDate, endDate, page, size, q]);
+    };
 
     return { data, loading, error, loadNeoWsList };
 }
