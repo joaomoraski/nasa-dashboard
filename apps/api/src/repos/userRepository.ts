@@ -1,4 +1,6 @@
 import User from "../models/user";
+import { prisma } from "../config/prisma";
+import Favorite from "../models/favorite";
 
 export default interface IUserRepo {
     registerUser(email: string, password: string): Promise<User>;
@@ -8,18 +10,76 @@ export default interface IUserRepo {
 
 export class UserRepository implements IUserRepo {
     async registerUser(email: string, password: string): Promise<User> {
-        return new User({ id: 0, email: email, password: password, apiKey: "", createdAt: new Date(), updatedAt: new Date() });
+        const user = await prisma.user.create({
+            data: {
+                email: email,
+                password: password,
+                api_key: "DEMO_KEY",
+            }
+        });
+
+        return new User({
+            id: user.id,
+            email: user.email,
+            password: user.password,
+            apiKey: user.api_key,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt,
+        });
     }
+
     async getUserById(id: number): Promise<User> {
-        return new User({ id: id, email: "", password: "", apiKey: "", createdAt: new Date(), updatedAt: new Date() });
+        const user = await prisma.user.findUnique({
+            where: {
+                id: id,
+            }
+        });
+
+        if (!user) {
+            throw new Error("User not found");
+        }
+
+        return new User({ id: user.id, email: user.email, password: user.password, apiKey: user.api_key, createdAt: user.createdAt, updatedAt: user.updatedAt });
     }
+
     async getUserByIdWithFavorites(id: number): Promise<User> {
-        return new User({ id: id, email: "", password: "", apiKey: "", createdAt: new Date(), updatedAt: new Date() });
+        const user = await prisma.user.findUnique({
+            where: {
+                id: id,
+            },
+            include: {
+                favorites: true
+            }
+        });
+
+        if (!user) {
+            throw new Error("User not found");
+        }
+
+        return new User({
+            id: user.id,
+            email: user.email,
+            password: user.password,
+            apiKey: user.api_key,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt,
+            favorites: user.favorites.map((fav) => new Favorite(fav))
+        });
     }
     async updateUser(user: User): Promise<User> {
-        return new User({ id: user.id, email: user.email, password: user.password, apiKey: user.apiKey, createdAt: user.createdAt, updatedAt: user.updatedAt });
+        const updatedUser = await prisma.user.update({
+            where: { id: user.id },
+            data: {
+                email: user.email,
+                password: user.password,
+                api_key: user.apiKey,
+            },
+        })
+        return new User({ id: updatedUser.id, email: updatedUser.email, password: updatedUser.password, apiKey: updatedUser.api_key, createdAt: updatedUser.createdAt, updatedAt: updatedUser.updatedAt });
     }
     async deleteUser(id: number): Promise<void> {
-        return;
+        await prisma.user.delete({
+            where: { id: id },
+        });
     }
 }

@@ -1,3 +1,5 @@
+import Favorite from "./favorite";
+
 interface UserProps {
     id: number;
     email: string;
@@ -5,6 +7,7 @@ interface UserProps {
     apiKey: string;
     createdAt: Date;
     updatedAt: Date;
+    favorites?: Favorite[];
 }
 
 export default class User {
@@ -14,6 +17,7 @@ export default class User {
     apiKey: string;
     createdAt: Date;
     updatedAt: Date;
+    favorites?: Favorite[];
 
     constructor(props: UserProps) {
         this.id = props.id;
@@ -22,6 +26,7 @@ export default class User {
         this.apiKey = props.apiKey;
         this.createdAt = props.createdAt;
         this.updatedAt = props.updatedAt;
+        this.favorites = props.favorites;
     }
 
     

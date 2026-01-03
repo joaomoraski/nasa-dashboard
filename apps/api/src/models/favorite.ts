@@ -1,6 +1,6 @@
 import User from "./user"
 
-interface FavoritesProps {
+interface FavoriteProps {
     id: number,
     userId: number,
     fav_type: string,
@@ -11,7 +11,7 @@ interface FavoritesProps {
     updatedAt: Date,
 }
 
-export default class Favorites {
+export default class Favorite {
     id: number;
     userId: number;
     fav_type: string;
@@ -21,7 +21,7 @@ export default class Favorites {
     createdAt: Date;
     updatedAt: Date;
 
-    constructor(props: FavoritesProps) {
+    constructor(props: FavoriteProps) {
         this.id = props.id;
         this.userId = props.userId;
         this.fav_type = props.fav_type;
