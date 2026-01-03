@@ -29,5 +29,4 @@ export default class User {
         this.favorites = props.favorites;
     }
 
-    
 }

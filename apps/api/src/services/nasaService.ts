@@ -173,8 +173,7 @@ export async function fetchNasaImages(filter: string, page: number, size: number
         throw new ApiError(response.status, `NASA error: ${body}`);
     }
 
-
-    const data: NasaImagesApiResponse = await response.json();
+    const data = await response.json() as NasaImagesApiResponse;
     const items = data.collection.items;
 
     const nasaImages: NasaImage[] = (await Promise.all(
@@ -193,6 +192,7 @@ export async function fetchNasaImages(filter: string, page: number, size: number
                 title: rawData.title,
                 photographer: rawData.photographer,
             };
+            return image;
         })
     )).filter((image): image is NasaImage => image !== undefined);
 

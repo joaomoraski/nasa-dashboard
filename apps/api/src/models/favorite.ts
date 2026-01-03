@@ -7,8 +7,8 @@ interface FavoriteProps {
     media_type: string,
     description: string,
     metadata: any,
-    createdAt: Date,
-    updatedAt: Date,
+    createdAt?: Date,
+    updatedAt?: Date,
 }
 
 export default class Favorite {
@@ -28,7 +28,7 @@ export default class Favorite {
         this.media_type = props.media_type;
         this.description = props.description;
         this.metadata = props.metadata;
-        this.createdAt = props.createdAt;
-        this.updatedAt = props.updatedAt;
+        this.createdAt = props.createdAt ?? new Date();
+        this.updatedAt = props.updatedAt ?? new Date();
     }
 }

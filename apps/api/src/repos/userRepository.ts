@@ -1,6 +1,7 @@
 import User from "../models/user";
 import { prisma } from "../config/prisma";
 import Favorite from "../models/favorite";
+import { RepositoryError } from "../types";
 
 export default interface IUserRepo {
     registerUser(email: string, password: string): Promise<User>;
@@ -36,7 +37,7 @@ export class UserRepository implements IUserRepo {
         });
 
         if (!user) {
-            throw new Error("User not found");
+            throw new RepositoryError("User not found");
         }
 
         return new User({ id: user.id, email: user.email, password: user.password, apiKey: user.api_key, createdAt: user.createdAt, updatedAt: user.updatedAt });
@@ -53,7 +54,7 @@ export class UserRepository implements IUserRepo {
         });
 
         if (!user) {
-            throw new Error("User not found");
+            throw new RepositoryError("User not found");
         }
 
         return new User({
@@ -66,9 +67,10 @@ export class UserRepository implements IUserRepo {
             favorites: user.favorites.map((fav) => new Favorite(fav))
         });
     }
-    async updateUser(user: User): Promise<User> {
+    
+    async updateUser(id: number, user: User): Promise<User> {
         const updatedUser = await prisma.user.update({
-            where: { id: user.id },
+            where: { id: id },
             data: {
                 email: user.email,
                 password: user.password,
@@ -77,6 +79,7 @@ export class UserRepository implements IUserRepo {
         })
         return new User({ id: updatedUser.id, email: updatedUser.email, password: updatedUser.password, apiKey: updatedUser.api_key, createdAt: updatedUser.createdAt, updatedAt: updatedUser.updatedAt });
     }
+
     async deleteUser(id: number): Promise<void> {
         await prisma.user.delete({
             where: { id: id },

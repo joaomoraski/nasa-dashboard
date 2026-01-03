@@ -7,6 +7,13 @@ export class ApiError extends Error {
     }
 }
 
+export class RepositoryError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = 'RepositoryError';
+    }
+}
+
 export type NasaItem = {
     href: string;
     data?: NasaImage[];
