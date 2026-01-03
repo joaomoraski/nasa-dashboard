@@ -82,7 +82,7 @@ export default function NasaImagesPage() {
 
             {/* Images Grid */}
             {items.length > 0 && (
-                <div className="grid grid-cols-4 gap-4">
+                <div className="grid grid-cols-4 gap-4 items-stretch">
                     {items.map((image) => (
                         <ImageCard key={image.nasa_id} image={image} />
                     ))}
