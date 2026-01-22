@@ -23,13 +23,13 @@ export default function ImageCard({ image }: ImageCardProps) {
             <h5 className="text-blue-600 mt-6 mb-2 text-2xl font-semibold tracking-tight text-heading break-all">{image.title}</h5>
             <p className="text-body flex-grow min-h-0">{image.description}</p>
             <div className="mt-auto">
-                <hr/>
-                <p className="pt-2 text-sm text-left text-body">Data da foto: {dateCreatedText}</p>
-                <p className="pt-2 pb-2 text-sm text-left text-body">Palavras-chave: {keywordsText}</p>
-                <hr/>
-                {image.photographer && (
-                    <p className="pt-2 text-sm text-left text-body">Fotógrafo: {image.photographer}</p>
-                )}
+            <hr/>
+            <p className="pt-2 text-sm text-left text-body">Photo Date: {dateCreatedText}</p>
+            <p className="pt-2 pb-2 text-sm text-left text-body">Keywords: {keywordsText}</p>
+            <hr/>
+            {image.photographer && (
+                <p className="pt-2 text-sm text-left text-body">Photographer: {image.photographer}</p>
+            )}
             </div>
         </div>
 

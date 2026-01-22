@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import type { NasaImagesResponse } from '../types/neoWs';
 import { fetchNasaImages } from '../services/imageService';
 

@@ -20,11 +20,20 @@ export async function addFavorite(userId: number, fav_type: string, media_type: 
     }
 }
 
-export async function getFavoriteById(id: number): Promise<Favorite> {
+export async function getFavoriteById(id: number, userId: number): Promise<Favorite> {
     try {
         const favorite = await favoriteRepository.getFavoriteById(id);
+        
+        // Verify the favorite belongs to the authenticated user
+        if (favorite.userId !== userId) {
+            throw new ApiError(403, 'Forbidden: You can only access your own favorites');
+        }
+        
         return favorite;
     } catch (error) {
+        if (error instanceof ApiError) {
+            throw error;
+        }
         throw new ApiError(404, 'Favorite not found');
     }
 }
@@ -38,10 +47,20 @@ export async function getFavoritesByUserId(userId: number): Promise<Favorite[]> 
     }
 }
 
-export async function deleteFavorite(id: number): Promise<void> {
+export async function deleteFavorite(id: number, userId: number): Promise<void> {
     try {
+        // First verify the favorite belongs to the authenticated user
+        const favorite = await favoriteRepository.getFavoriteById(id);
+        
+        if (favorite.userId !== userId) {
+            throw new ApiError(403, 'Forbidden: You can only delete your own favorites');
+        }
+        
         await favoriteRepository.deleteFavorite(id);
     } catch (error) {
+        if (error instanceof ApiError) {
+            throw error;
+        }
         throw new ApiError(404, 'Favorite not found');
     }
 }
