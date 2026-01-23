@@ -63,6 +63,29 @@ export async function getFavoritesByUserId(req: Request, res: Response): Promise
     }
 }
 
+export async function checkFavorite(req: Request, res: Response): Promise<void> {
+    if (!req.body.fav_type || !req.body.description) {
+        throw new ApiError(400, 'fav_type and description are required');
+    }
+    
+    const user = getAuthenticatedUser(req);
+    const { fav_type, description } = req.body;
+    
+    try {
+        const favorite = await favoriteService.findFavoriteByCriteria(user.id, fav_type, description);
+        if (favorite) {
+            res.status(200).json(favorite);
+        } else {
+            res.status(404).json({ message: 'Favorite not found' });
+        }
+    } catch (error) {
+        if (error instanceof ApiError) {
+            throw error;
+        }
+        throw new ApiError(500, 'Failed to check favorite');
+    }
+}
+
 export async function deleteFavorite(req: Request, res: Response): Promise<void> {
     if (!req.params.id) {
         throw new ApiError(400, 'Favorite ID is required');

@@ -47,6 +47,15 @@ export async function getFavoritesByUserId(userId: number): Promise<Favorite[]> 
     }
 }
 
+export async function findFavoriteByCriteria(userId: number, fav_type: string, description: string): Promise<Favorite | null> {
+    try {
+        const favorite = await favoriteRepository.findFavoriteByCriteria(userId, fav_type, description);
+        return favorite;
+    } catch (error) {
+        throw new ApiError(500, 'Failed to search favorite');
+    }
+}
+
 export async function deleteFavorite(id: number, userId: number): Promise<void> {
     try {
         // First verify the favorite belongs to the authenticated user

@@ -3,6 +3,8 @@ import type { User } from "../types/auth";
 import { loginUser as loginUserService, registerUser as registerUserService } from "../services/authService";
 import { updateUser as updateUserService } from "../services/authService";
 import type { Favorite } from "../types/favorite";
+import { addFavorite as addFavoriteService, checkFavorite as checkFavoriteService, getFavoritesByUserId as getFavoritesByUserIdService } from "../services/favoriteService";
+import { deleteFavorite as deleteFavoriteService } from "../services/favoriteService";
 
 interface AuthContextType {
     user: User | null;
@@ -15,8 +17,9 @@ interface AuthContextType {
     register: (email: string, password: string, passwordConfirmation: string) => Promise<void>;
     logout: () => void;
     updateApiKey: (apiKey: string) => Promise<void>;
-    addFavorite: (favorite: Favorite) => Promise<void>;
-    getFavorites: () => Promise<void>;
+    addFavorite: (favorite: Favorite) => Promise<Favorite>;
+    checkFavorite: (fav_type: string, description: string) => Promise<Favorite | null>;
+    getFavorites: () => Promise<Favorite[]>;
     deleteFavorite: (id: number) => Promise<void>;
 };
 
@@ -137,15 +140,63 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     const addFavorite = async (favorite: Favorite) => {
-        //
+        try {
+            if (!user?.id || !token) {
+                throw new Error('User not found');
+            }
+
+            const response = await addFavoriteService(token, favorite);
+            return response;
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+            setError(errorMessage);
+            throw error;
+        }
+    }
+
+    const checkFavorite = async (fav_type: string, description: string) => {
+        try {
+            if (!user?.id || !token) {
+                return null;
+            }
+
+            const response = await checkFavoriteService(token, fav_type, description);
+            return response;
+        } catch (error) {
+            return null;
+        }
     }
 
     const getFavorites = async () => {
-        // 
+        try {
+            if (!user?.id || !token) {
+                throw new Error('User not found');
+            }
+
+            const response = await getFavoritesByUserIdService(token, user.id);
+            return response;
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+            setError(errorMessage);
+            throw error;
+        }
     }
 
     const deleteFavorite = async (id: number) => {
-        //
+        try {
+            if (!user?.id || !token) {
+                throw new Error('User not found');
+            }
+
+            const response = await deleteFavoriteService(token, id);
+            return response;
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+            setError(errorMessage);
+            throw error;
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
@@ -161,6 +212,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             logout,
             updateApiKey,
             addFavorite,
+            checkFavorite,
             getFavorites,
             deleteFavorite
         }}>

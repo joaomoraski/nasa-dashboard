@@ -1,13 +1,21 @@
 import type { NasaImage } from "../../types/neoWs";
+import { FavoriteButton } from "../favorite/FavoriteButton";
 
 interface ImageCardProps {
     image: NasaImage;
 }
 
 export default function ImageCard({ image }: ImageCardProps) {
-
     const keywordsText = Array.isArray(image.keywords) ? image.keywords.join(", ") : "";
     const dateCreatedText = new Date(image.date_created).toLocaleDateString();
+
+    const favorite = {
+        id: 0,
+        fav_type: "nasa_image",
+        media_type: image.media_type,
+        description: image.title,
+        metadata: image,
+    };
 
     return (
         <div className="bg-neutral-primary-soft block max-w-sm p-6 border border-default rounded-base shadow-xs flex flex-col h-full">
@@ -26,10 +34,11 @@ export default function ImageCard({ image }: ImageCardProps) {
             <hr/>
             <p className="pt-2 text-sm text-left text-body">Photo Date: {dateCreatedText}</p>
             <p className="pt-2 pb-2 text-sm text-left text-body">Keywords: {keywordsText}</p>
-            <hr/>
+            <hr className="mb-2"/>
             {image.photographer && (
-                <p className="pt-2 text-sm text-left text-body">Photographer: {image.photographer}</p>
+                <p className="pb-2 text-sm text-left text-body">Photographer: {image.photographer}</p>
             )}
+            <FavoriteButton favorite={favorite} />
             </div>
         </div>
 

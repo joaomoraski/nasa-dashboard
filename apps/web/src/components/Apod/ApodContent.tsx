@@ -1,6 +1,6 @@
-import { useState } from 'react';
 import type { Apod } from '../../types/apod';
-
+import { FavoriteButton } from '../favorite/FavoriteButton';
+    
 interface ApodContentProps {
     data: Apod;
 }
@@ -9,6 +9,13 @@ interface ApodContentProps {
  * Component for displaying APOD content
  */
 export function ApodContent({ data }: ApodContentProps) {
+    const favorite = {
+        id: 0,
+        fav_type: "apod",
+        media_type: data.media_type,
+        description: data.title,
+        metadata: data,
+    };
 
     return (
         <div style={{ marginTop: 16 }}>
@@ -16,6 +23,7 @@ export function ApodContent({ data }: ApodContentProps) {
                 <h2>
                     {data.title} ({data.date})
                 </h2>
+                <FavoriteButton favorite={favorite} />
             </div>
             {data.media_type === "image" ? (
                 <div className="flex justify-center items-center rounded-lg" style={{ marginTop: 12 }}>

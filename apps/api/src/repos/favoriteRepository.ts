@@ -5,6 +5,7 @@ export default interface IFavoriteRepo {
     addFavorite(favorite: Favorite): Promise<Favorite>;
     getFavoriteById(id: number): Promise<Favorite>;
     getFavoritesByUserId(userId: number): Promise<Favorite[]>;
+    findFavoriteByCriteria(userId: number, fav_type: string, description: string): Promise<Favorite | null>;
     deleteFavorite(id: number): Promise<void>;
 }
 
@@ -44,6 +45,20 @@ export class FavoriteRepository implements IFavoriteRepo {
             throw new Error("Favorites not found");
         }
         return fav.map((f) => new Favorite(f))
+    }
+
+    async findFavoriteByCriteria(userId: number, fav_type: string, description: string): Promise<Favorite | null> {
+        const fav = await prisma.favorite.findFirst({
+            where: {
+                userId: userId,
+                fav_type: fav_type,
+                description: description,
+            }
+        });
+        if (!fav) {
+            return null;
+        }
+        return new Favorite({ id: fav.id, userId: fav.userId, fav_type: fav.fav_type, media_type: fav.media_type, description: fav.description, metadata: fav.metadata, createdAt: fav.createdAt, updatedAt: fav.updatedAt });
     }
 
     async deleteFavorite(id: number): Promise<void> {
