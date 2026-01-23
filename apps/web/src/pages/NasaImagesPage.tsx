@@ -51,8 +51,9 @@ export default function NasaImagesPage() {
     const canNext = meta.page < meta.totalPages;
 
     return (
-        <div style={{ padding: 16 }}>
-            <h2 className="text-2xl font-bold">Nasa Images</h2>
+        <div className="w-full px-6 py-8">
+            <div className="max-w-7xl mx-auto">
+                <h2 className="text-4xl font-bold text-white mb-6">NASA Images</h2>
 
             {/* Search Form */}
             <form className="w-full max-w-sm">
@@ -67,7 +68,7 @@ export default function NasaImagesPage() {
                     />
                     <button className="flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded" 
                         type="button" onClick={handleClickSearch}>
-                        Buscar
+                        Search
                     </button>
                 </div>
             </form>
@@ -96,11 +97,12 @@ export default function NasaImagesPage() {
                         type="button"
                         disabled={!canPrev}
                         onClick={() => setPage((p) => Math.max(1, p - 1))}
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         Prev
                     </button>
 
-                    <span>
+                    <span className="text-white">
                         Page {meta.page} / {meta.totalPages} (total: {meta.total})
                     </span>
 
@@ -108,11 +110,13 @@ export default function NasaImagesPage() {
                         type="button"
                         disabled={!canNext}
                         onClick={() => setPage((p) => p + 1)}
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         Next
                     </button>
                 </div>
             )}
+            </div>
         </div>
     );
 }

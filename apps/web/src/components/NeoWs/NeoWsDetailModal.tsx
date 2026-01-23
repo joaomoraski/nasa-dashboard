@@ -96,6 +96,35 @@ export default function NeoWsDetailModal({ selectedId, setSelectedId, detailLoad
                         </div>
                     </div>
 
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Property</th>
+                                <th>Value</th>
+                                <th>Value</th>
+                                <th>Value</th>
+                                <th>Value</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr key={detailResponse.id}>
+                                <td style={{ padding: "8px 4px" }}>{detailResponse.name}</td>
+                                <td style={{ padding: "8px 4px" }}>{detailResponse.date}</td>
+                                <td style={{ padding: "8px 4px", textAlign: "right" }}>
+                                    {formatNumber(detailResponse.velKph)}
+                                </td>
+                                <td style={{ padding: "8px 4px", textAlign: "right" }}>
+                                    {formatNumber(detailResponse.missKm)}
+                                </td>
+                                <td style={{ padding: "8px 4px" }}>
+                                    {detailResponse.hazardous ? "⚠️ hazardous " : ""}
+                                    {detailResponse.sentry ? "🛰️ sentry" : ""}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
                     {/* Physical Properties */}
                     <div style={{ marginBottom: 24, padding: 16, background: "#1a1a1a", borderRadius: 8 }}>
                         <h4 style={{ marginBottom: 12, fontSize: "1.1em" }}>Physical Properties</h4>

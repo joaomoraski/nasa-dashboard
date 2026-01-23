@@ -24,7 +24,11 @@ export function ApodForm({ onSubmit, loading }: ApodFormProps) {
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
             />
-            <button type="submit" disabled={loading}>
+            <button 
+                type="submit" 
+                disabled={loading}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
                 {loading ? "Loading..." : "Fetch"}
             </button>
         </form>
