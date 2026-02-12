@@ -25,6 +25,17 @@ export async function fetchApod(apiKey: string, date?: string): Promise<any> {
     const url = new URL(NASA_PLANETARY_BASE_URL);
     url.searchParams.set('api_key', apiKey);
     if (date) {
+        const selectedDate = new Date(date);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Normalize today to start of day
+
+        // Check if date is in the future
+        // We use date string comparison for simplicity as YYYY-MM-DD
+        const todayStr = new Date().toISOString().split('T')[0];
+        if (date > todayStr) {
+            throw new ApiError(400, "Date cannot be in the future");
+        }
+
         url.searchParams.set('date', date);
     }
 
@@ -77,6 +88,11 @@ export async function fetchNeoWs(apiKey: string, startDate?: string, endDate?: s
     }
 
     if (startDate && endDate) {
+        const todayStr = new Date().toISOString().split('T')[0];
+        if (startDate > todayStr || endDate > todayStr) {
+            throw new ApiError(400, "Date cannot be in the future");
+        }
+
         const diffDays = daysBetween(startDate, endDate);
         if (diffDays > 7) {
             throw new ApiError(400, "Date range too large (max 7 days)");
