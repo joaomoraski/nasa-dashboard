@@ -1,12 +1,17 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import type { Favorite } from "../../types/favorite";
+import { useNavigate } from "react-router-dom";
+import { Notification } from "../notification";
 
 export function FavoriteButton({ favorite }: { favorite: Favorite }) {
     const [isFavorite, setIsFavorite] = useState(false);
     const [isAnimating, setIsAnimating] = useState(false);
     const [favoriteId, setFavoriteId] = useState<number | null>(null);
+    const [showLoginNotification, setShowLoginNotification] = useState(false);
+    
     const { user, checkFavorite, addFavorite, deleteFavorite } = useAuth();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const checkIfFavorite = async () => {
@@ -35,8 +40,10 @@ export function FavoriteButton({ favorite }: { favorite: Favorite }) {
 
     const handleFavorite = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
+        e.stopPropagation(); // Prevent bubbling to parent elements (like card links)
 
         if (!user) {
+            setShowLoginNotification(true);
             return;
         }
 
@@ -57,21 +64,51 @@ export function FavoriteButton({ favorite }: { favorite: Favorite }) {
         } finally {
             setTimeout(() => {
                 setIsAnimating(false);
-            }, 1500);
+            }, 1000); // Shorter animation duration
         }
     };
 
     return (
-        <button type="button" onClick={(e) => handleFavorite(e)} className="text-heading bg-transparent box-border border border-transparent hover:bg-neutral-secondary-medium focus:ring-4 focus:ring-neutral-tertiary font-small leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none">
-            {isFavorite ? (
-                <svg className={`w-6 h-6 text-gray-800 dark:text-white ${isAnimating ? 'animate-bounce' : ''}`} aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="m12.75 20.66 6.184-7.098c2.677-2.884 2.559-6.506.754-8.705-.898-1.095-2.206-1.816-3.72-1.855-1.293-.034-2.652.43-3.963 1.442-1.315-1.012-2.678-1.476-3.973-1.442-1.515.04-2.825.76-3.724 1.855-1.806 2.201-1.915 5.823.772 8.706l6.183 7.097c.19.216.46.34.743.34a.985.985 0 0 0 .743-.34Z" />
-                </svg>
-            ) : (
-                <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12.01 6.001C6.5 1 1 8 5.782 13.001L12.011 20l6.23-7C23 8 17.5 1 12.01 6.002Z" />
-                </svg>
+        <>
+            {showLoginNotification && (
+                <div className="fixed top-4 right-4 z-[100] min-w-[300px]">
+                    <Notification 
+                        type="warning" 
+                        message="Please login to save favorites" 
+                        onClose={() => setShowLoginNotification(false)}
+                        autoClose={3000}
+                    />
+                </div>
             )}
-        </button>
+            
+            <button 
+                type="button" 
+                onClick={handleFavorite} 
+                className={`
+                    group relative flex items-center justify-center w-10 h-10 rounded-full 
+                    transition-all duration-300 
+                    ${isFavorite 
+                        ? 'bg-red-500/20 text-red-500 hover:bg-red-500/30' 
+                        : 'bg-white/10 text-white hover:bg-white/20 hover:scale-110'
+                    }
+                    focus:outline-none focus:ring-2 focus:ring-red-500/50
+                `}
+                aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+            >
+                <svg 
+                    className={`w-5 h-5 transition-transform duration-300 ${isAnimating ? 'animate-ping' : ''}`} 
+                    fill={isFavorite ? "currentColor" : "none"} 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                >
+                    <path 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round" 
+                        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" 
+                    />
+                </svg>
+            </button>
+        </>
     );
 }
