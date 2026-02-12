@@ -51,7 +51,6 @@ export default function RegisterPage() {
             setPassword("");
             setConfirmPassword("");
             
-            // redirect after 2 seconds
             setTimeout(() => {
                 navigate("/apod");
             }, 2000);
@@ -61,15 +60,22 @@ export default function RegisterPage() {
     }
 
     return (
-        <div className="min-h-screen flex">
-            <div className="flex-1 flex items-center justify-center bg-gray-900 p-8">
-                <div className="w-full max-w-md">
-                    <h1 className="text-4xl font-bold text-white mb-2">Create Account</h1>
-                    <p className="text-gray-400 mb-8">Join NASA Dashboard and explore the cosmos</p>
-                    
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+        <div className="min-h-screen flex text-slate-200 font-sans">
+            <div className="flex-1 flex items-center justify-center p-8 relative overflow-hidden">
+                 {/* Background Elements */}
+                 <div className="absolute top-0 left-0 w-full h-full bg-slate-950 z-0"></div>
+                 <div className="absolute -top-20 -left-20 w-96 h-96 bg-cyan-500/20 rounded-full blur-3xl z-0"></div>
+                 <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl z-0"></div>
+
+                <div className="w-full max-w-md relative z-10 space-y-8">
+                    <div className="text-center">
+                        <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 mb-2">Create Account</h1>
+                        <p className="text-slate-400 text-lg">Join NASA Dashboard and explore the cosmos</p>
+                    </div>
+
+                    <form onSubmit={handleSubmit} className="space-y-5 glass-panel p-8 rounded-3xl border border-white/5">
+                        <div className="space-y-2">
+                            <label htmlFor="email" className="block text-sm font-medium text-slate-300 ml-1">
                                 Email
                             </label>
                             <input
@@ -78,13 +84,13 @@ export default function RegisterPage() {
                                 name="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                className="glass-input w-full px-5 py-3 rounded-xl focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 [color-scheme:dark]"
                                 placeholder="Enter your email"
                             />
                         </div>
                         
-                        <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
+                        <div className="space-y-2">
+                            <label htmlFor="password" className="block text-sm font-medium text-slate-300 ml-1">
                                 Password
                             </label>
                             <input
@@ -93,13 +99,13 @@ export default function RegisterPage() {
                                 name="password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                className="glass-input w-full px-5 py-3 rounded-xl focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 [color-scheme:dark]"
                                 placeholder="Create a password"
                             />
                         </div>
                         
-                        <div>
-                            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-2">
+                        <div className="space-y-2">
+                            <label htmlFor="confirmPassword" className="block text-sm font-medium text-slate-300 ml-1">
                                 Confirm Password
                             </label>
                             <input
@@ -108,76 +114,73 @@ export default function RegisterPage() {
                                 name="confirmPassword"
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
-                                className="w-full px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                className="glass-input w-full px-5 py-3 rounded-xl focus:ring-2 focus:ring-cyan-500/50 focus:border-cyan-500/50 [color-scheme:dark]"
                                 placeholder="Confirm your password"
                             />
                         </div>
                         
                         <button
                             type="submit"
-                            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900"
+                            disabled={loading}
+                            className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold py-3.5 px-4 rounded-xl transition duration-200 shadow-lg shadow-cyan-900/30 transform hover:-translate-y-0.5 active:translate-y-0 mt-2"
                         >
-                            Sign Up
+                            {loading ? (
+                                <span className="flex items-center justify-center gap-2">
+                                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                     Creating Account...
+                                </span>
+                            ) : "Sign Up"}
                         </button>
                     </form>
 
-                    {/* Validation Error */}
-                    {validationError && (
-                        <Notification 
-                            key={`validation-${validationError}`}
-                            message={validationError} 
-                            type="warning" 
-                            autoClose={4000}
-                            onClose={() => setValidationError(null)}
-                        />
-                    )}
+                    {/* Notifications */}
+                    <div className="space-y-2">
+                        {validationError && (
+                            <Notification 
+                                key={`validation-${validationError}`}
+                                message={validationError} 
+                                type="warning" 
+                                autoClose={4000}
+                                onClose={() => setValidationError(null)}
+                            />
+                        )}
+                        {showSuccess && (
+                            <Notification 
+                                key="success"
+                                message="Account created successfully! Redirecting..." 
+                                type="success" 
+                                autoClose={2000}
+                            />
+                        )}
+                        {error && (
+                            <Notification 
+                                key={`error-${error}`}
+                                message={error} 
+                                type="error" 
+                                autoClose={5000}
+                                onClose={() => setError(null)}
+                            />
+                        )}
+                    </div>
                     
-                    {/* Success Notification */}
-                    {showSuccess && (
-                        <Notification 
-                            key="success"
-                            message="Account created successfully! Redirecting..." 
-                            type="success" 
-                            autoClose={2000}
-                        />
-                    )}
-                    
-                    {/* Error Notification */}
-                    {error && (
-                        <Notification 
-                            key={`error-${error}`}
-                            message={error} 
-                            type="error" 
-                            autoClose={5000}
-                            onClose={() => setError(null)}
-                        />
-                    )}
-                    
-                    {/* Loading */}
-                    {loading && (
-                        <div className="mt-4 text-center">
-                            <p className="text-gray-400">Creating your account...</p>
-                        </div>
-                    )}
-                    
-                    <p className="mt-6 text-center text-gray-400">
+                    <p className="text-center text-slate-400">
                         Already have an account?{' '}
-                        <a href="/login" className="text-blue-500 hover:text-blue-400 font-medium">
+                        <a href="/login" className="text-cyan-400 hover:text-cyan-300 font-semibold transition-colors">
                             Sign in
                         </a>
                     </p>
                 </div>
             </div>
             
-            <div className="hidden lg:flex flex-1 items-center justify-center bg-gradient-to-br from-blue-900 via-purple-900 to-black p-8">
-                <div className="text-center">
-                    <img
-                        src="https://apod.nasa.gov/apod/image/2512/M77_Hubble_960.jpg"
-                        alt="Spiral Galaxy with an Active Center "
-                        className="w-full max-w-lg rounded-lg shadow-2xl"
-                    />
-                    <h2 className="text-3xl font-bold text-white mt-8">Explore the Universe</h2>
-                    <p className="text-gray-300 mt-4">Discover NASA's amazing space discoveries</p>
+            <div className="hidden lg:flex flex-1 items-center justify-center relative overflow-hidden bg-black">
+                <div className="absolute inset-0 bg-[url('https://apod.nasa.gov/apod/image/2512/M77_Hubble_960.jpg')] bg-cover bg-center opacity-60"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+                
+                <div className="relative z-10 text-center p-12 max-w-2xl glass-panel rounded-3xl border border-white/10 backdrop-blur-md">
+                    <h2 className="text-4xl font-bold text-white mb-6">Journey to the Stars</h2>
+                    <p className="text-slate-200 text-xl leading-relaxed">
+                        Unlock the mysteries of the cosmos with daily updates, extensive archives, and real-time tracking of near-earth objects.
+                    </p>
                 </div>
             </div>
         </div>

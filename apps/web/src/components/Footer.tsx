@@ -1,15 +1,15 @@
 export default function Footer() {
     return (
-        <footer className="bg-gradient-to-r from-gray-900 via-blue-900 to-gray-900 border-t border-blue-800/50 mt-auto py-6">
-            <div className="container mx-auto px-6 text-center">
-                <p className="text-gray-300 mb-2">NASA Dashboard &copy; {new Date().getFullYear()}</p>
-                <p className="text-gray-400 text-sm">
+        <footer className="mt-auto py-8 text-center text-slate-500 text-sm">
+            <div className="container mx-auto px-6">
+                <p className="mb-2">NASA Dashboard &copy; {new Date().getFullYear()}</p>
+                <p>
                     Developed by{' '}
                     <a 
                         href="https://github.com/joaomoraski" 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="text-blue-400 hover:text-blue-300 transition-colors duration-200"
+                        className="text-cyan-500 hover:text-cyan-400 transition-colors font-medium"
                     >
                         João Moraski
                     </a>
