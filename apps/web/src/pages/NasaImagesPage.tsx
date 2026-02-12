@@ -3,22 +3,16 @@ import type { Meta, NasaImage } from "../types/neoWs";
 import { useNasaImages } from "../hooks/useNasaImages";
 import ImageCard from "../components/NasaImages/ImageCard";
 
-
 export default function NasaImagesPage() {
-    // Filters state
     const [q, setQ] = useState("");
-
-    // Pagination state
     const [page, setPage] = useState(1);
     const [size] = useState(20);
-
     const [validationError, setValidationError] = useState<string | null>(null);
 
-    // Use hooks for data fetching
     const { data: response, loading, error, loadNasaImages } = useNasaImages(page, size);
 
-    const handleClickSearch = () => {
-        // clear validation error
+    const handleClickSearch = (e: React.FormEvent) => {
+        e.preventDefault();
         setValidationError(null);
 
         if (!q.trim()) {
@@ -39,85 +33,86 @@ export default function NasaImagesPage() {
 
     const items: NasaImage[] = response?.paginated ?? [];
     const meta: Meta = response?.meta ?? {
-        page: 1,
-        size: 20,
-        total: 0,
-        totalPages: 0,
-        start: 0,
-        end: 0,
+        page: 1, size: 20, total: 0, totalPages: 0, start: 0, end: 0,
     };
 
-    const canPrev = meta.page > 1;
-    const canNext = meta.page < meta.totalPages;
-
     return (
-        <div className="w-full px-6 py-8">
-            <div className="max-w-7xl mx-auto">
-                <h2 className="text-4xl font-bold text-white mb-6">NASA Images</h2>
+        <div className="w-full max-w-7xl mx-auto space-y-8 animate-fade-in">
+            <div className="text-center space-y-6 py-10">
+                <h2 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
+                    Image Gallery
+                </h2>
+                <p className="text-slate-400 text-lg">Search through NASA's extensive library of images and videos.</p>
+                
+                <form onSubmit={handleClickSearch} className="max-w-xl mx-auto relative group">
+                    <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-200"></div>
+                    <div className="relative flex glass-panel rounded-xl overflow-hidden p-1">
+                        <input
+                            className="flex-grow bg-transparent border-none text-white px-4 py-3 focus:outline-none placeholder-slate-500"
+                            type="text"
+                            placeholder="Search images (e.g. Orion, Mars, Apollo)"
+                            value={q}
+                            onChange={handleInputChange}
+                        />
+                        <button 
+                            type="submit"
+                            className="bg-cyan-600 hover:bg-cyan-500 text-white px-6 py-2 rounded-lg font-semibold transition-colors shadow-lg"
+                        >
+                            Search
+                        </button>
+                    </div>
+                </form>
+                
+                {validationError && (
+                    <p className="text-red-400 text-sm animate-pulse">{validationError}</p>
+                )}
+            </div>
 
-            {/* Search Form */}
-            <form className="w-full max-w-sm">
-                <div className="flex items-center border-b border-teal-500 py-2">
-                    <input
-                        className="appearence-once bg-transparent border-none w-full text-white mr-3 py-1 px-2 leading-tight focus:outline-none"
-                        type="text"
-                        placeholder="Search images (e.g: Orion)"
-                        aria-label="Search images"
-                        value={q}
-                        onChange={handleInputChange}
-                    />
-                    <button className="flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded" 
-                        type="button" onClick={handleClickSearch}>
-                        Search
-                    </button>
+            {loading && (
+                <div className="flex justify-center py-20">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-cyan-500"></div>
                 </div>
-            </form>
-
-            {/* Validation Error */}
-            {validationError && (
-                <p style={{ color: "tomato", marginTop: 8 }}>{validationError}</p>
             )}
-            {/* Loading / Error */}
-            {loading && <p>Loading...</p>}
-            {error && <p style={{ color: "tomato" }}>Error: {error}</p>}
+            
+            {error && (
+                <div className="bg-red-500/10 border border-red-500/20 text-red-200 p-4 rounded-xl text-center">
+                    Error: {error}
+                </div>
+            )}
 
-            {/* Images Grid */}
             {items.length > 0 && (
-                <div className="grid grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {items.map((image) => (
                         <ImageCard key={image.nasa_id} image={image} />
                     ))}
                 </div>
             )}
 
-            {/* Pagination */}
-            {meta && (
-                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            {meta.totalPages > 1 && (
+                <div className="flex justify-center items-center gap-4 py-8">
                     <button
                         type="button"
-                        disabled={!canPrev}
+                        disabled={meta.page <= 1}
                         onClick={() => setPage((p) => Math.max(1, p - 1))}
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="glass-button px-4 py-2 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed"
                     >
-                        Prev
+                        Previous
                     </button>
 
-                    <span className="text-white">
-                        Page {meta.page} / {meta.totalPages} (total: {meta.total})
+                    <span className="text-slate-400 font-mono text-sm">
+                        Page {meta.page} of {meta.totalPages}
                     </span>
 
                     <button
                         type="button"
-                        disabled={!canNext}
+                        disabled={meta.page >= meta.totalPages}
                         onClick={() => setPage((p) => p + 1)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="glass-button px-4 py-2 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed"
                     >
                         Next
                     </button>
                 </div>
             )}
-            </div>
         </div>
     );
 }
-

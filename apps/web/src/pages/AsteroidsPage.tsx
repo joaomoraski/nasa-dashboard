@@ -12,43 +12,35 @@ function formatNumber(n: number | null, suffix = "") {
 }
 
 export default function AsteroidsPage() {
-    // Filters state
     const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
     const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0]);
     const [q, setQ] = useState("");
     const [validationError, setValidationError] = useState<string | null>(null);
 
-    // Pagination state
     const [page, setPage] = useState(1);
     const [size] = useState(20);
-
-    // Modal state
     const [selectedId, setSelectedId] = useState<string | null>(null);
 
-    // Use hooks for data fetching
     const { data: response, loading, error, loadNeoWsList } = useNeoWsList();
     const { data: detailResponse, loading: detailLoading, error: detailError } = useNeoWsDetail(selectedId);
 
-
     const items = response?.items ?? [];
     const meta: Meta = response?.meta ?? {
-        page: 1,
-        size: 20,
-        total: 0,
-        totalPages: 0,
-        start: 0,
-        end: 0,
+        page: 1, size: 20, total: 0, totalPages: 0, start: 0, end: 0,
     };
 
     const canPrev = meta.page > 1;
     const canNext = meta.page < meta.totalPages;
 
     return (
-        <div className="w-full px-6 py-8">
-            <div className="max-w-7xl mx-auto">
-                <h2 className="text-4xl font-bold text-white mb-6">Near Earth Objects (NeoWs)</h2>
+        <div className="w-full max-w-7xl mx-auto space-y-8 animate-fade-in">
+             <div className="text-center space-y-4 pt-4 mb-8">
+                <h2 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500">
+                    Near Earth Objects
+                </h2>
+                <p className="text-slate-400 text-lg">Track asteroids and comets that pass close to Earth's orbit.</p>
+            </div>
 
-            {/* Filters Form */}
             <NeoFilterForm
                 startDate={startDate}
                 endDate={endDate}
@@ -63,25 +55,27 @@ export default function AsteroidsPage() {
                 loadNeoWsList={loadNeoWsList}
             />
 
-            {/* Validation Error */}
             {validationError && (
-                <p style={{ color: "tomato", marginTop: 8 }}>{validationError}</p>
+                <p className="text-red-400 text-center animate-pulse">{validationError}</p>
             )}
 
-            {/* Loading / Error */}
-            {loading && <p>Loading...</p>}
-            {error && <p style={{ color: "tomato" }}>Error: {error}</p>}
+            {loading && (
+                 <div className="flex justify-center py-12">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
+                </div>
+            )}
+            
+            {error && <p className="text-red-400 text-center">Error: {error}</p>}
 
-            {/* Table */}
-            <NeoWsTable items={items}
+            <NeoWsTable 
+                items={items}
                 loading={loading}
                 formatNumber={formatNumber}
                 setSelectedId={setSelectedId}
             />
 
-            {/* Pagination */}
-            {meta && response && (
-                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+            {meta.totalPages > 1 && response && (
+                <div className="flex justify-center items-center gap-4 py-8">
                     <button
                         type="button"
                         disabled={!canPrev}
@@ -90,13 +84,13 @@ export default function AsteroidsPage() {
                             setPage(newPage);
                             loadNeoWsList(startDate, endDate, newPage, size, q);
                         }}
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="glass-button px-4 py-2 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed"
                     >
-                        Prev
+                        Previous
                     </button>
 
-                    <span className="text-white">
-                        Page {meta.page} / {meta.totalPages} (total: {meta.total})
+                    <span className="text-slate-400 font-mono text-sm">
+                        Page {meta.page} of {meta.totalPages} <span className="text-slate-600">({meta.total} total)</span>
                     </span>
 
                     <button
@@ -107,14 +101,13 @@ export default function AsteroidsPage() {
                             setPage(newPage);
                             loadNeoWsList(startDate, endDate, newPage, size, q);
                         }}
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="glass-button px-4 py-2 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed"
                     >
                         Next
                     </button>
                 </div>
             )}
 
-            {/* Modal / Dialog (simple version) */}
             {selectedId && 
                 <NeoWsDetailModal 
                     selectedId={selectedId} 
@@ -125,8 +118,6 @@ export default function AsteroidsPage() {
                     formatNumber={formatNumber} 
                 />
             }
-            </div>
         </div>
     );
 }
-
