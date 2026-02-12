@@ -13,6 +13,20 @@ This application provides an intuitive interface for interacting with multiple N
 
 Built with a focus on clean architecture, separation of concerns, and scalable patterns suitable for production environments.
 
+## 📸 Screenshots
+
+| Login Page | Register Page |
+|:---:|:---:|
+| ![Login Page](docs/images/loginpage.png) | ![Register Page](docs/images/registerpage.png) |
+
+| APOD Page | Asteroids Page |
+|:---:|:---:|
+| ![APOD Page](docs/images/apodpage.png) | ![Asteroids Page](docs/images/asteroidspage.png) |
+
+| Images Page |
+|:---:|
+| ![Images Page](docs/images/imagesapge.png) |
+
 ## ✨ Features
 
 ### Public Features
