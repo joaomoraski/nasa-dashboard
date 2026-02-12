@@ -44,8 +44,9 @@ export default function AsteroidsPage() {
     const canNext = meta.page < meta.totalPages;
 
     return (
-        <div style={{ padding: 16 }}>
-            <h2>Near Earth Objects (NeoWs)</h2>
+        <div className="w-full px-6 py-8">
+            <div className="max-w-7xl mx-auto">
+                <h2 className="text-4xl font-bold text-white mb-6">Near Earth Objects (NeoWs)</h2>
 
             {/* Filters Form */}
             <NeoFilterForm
@@ -89,11 +90,12 @@ export default function AsteroidsPage() {
                             setPage(newPage);
                             loadNeoWsList(startDate, endDate, newPage, size, q);
                         }}
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         Prev
                     </button>
 
-                    <span>
+                    <span className="text-white">
                         Page {meta.page} / {meta.totalPages} (total: {meta.total})
                     </span>
 
@@ -105,6 +107,7 @@ export default function AsteroidsPage() {
                             setPage(newPage);
                             loadNeoWsList(startDate, endDate, newPage, size, q);
                         }}
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         Next
                     </button>
@@ -122,6 +125,7 @@ export default function AsteroidsPage() {
                     formatNumber={formatNumber} 
                 />
             }
+            </div>
         </div>
     );
 }

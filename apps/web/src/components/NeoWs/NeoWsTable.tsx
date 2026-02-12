@@ -1,4 +1,5 @@
 import type { AsteroidPreview } from "../../types/neoWs"
+import { FavoriteButton } from "../favorite/FavoriteButton";
 
 interface NeoWsTableProps {
     items: AsteroidPreview[] | null
@@ -31,10 +32,10 @@ export default function NeoWsTable({ items, loading, formatNumber, setSelectedId
                         <th style={{ textAlign: "right", borderBottom: "1px solid #444" }}>
                             Miss (km)
                         </th>
-                        <th style={{ textAlign: "left", borderBottom: "1px solid #444" }}>
+                        <th style={{ textAlign: "center", borderBottom: "1px solid #444" }}>
                             Flags
                         </th>
-                        <th style={{ textAlign: "left", borderBottom: "1px solid #444" }}>
+                        <th style={{ textAlign: "center", borderBottom: "1px solid #444" }}>
                             Actions
                         </th>
                     </tr>
@@ -51,15 +52,21 @@ export default function NeoWsTable({ items, loading, formatNumber, setSelectedId
                             <td style={{ padding: "8px 4px", textAlign: "right" }}>
                                 {formatNumber(neo.missKm)}
                             </td>
-                            <td style={{ padding: "8px 4px" }}>
+                            <td style={{ padding: "8px 4px", textAlign: "center" }}>
                                 {neo.hazardous ? "⚠️ hazardous " : ""}
                                 {neo.sentry ? "🛰️ sentry" : ""}
                             </td>
-                            <td style={{ padding: "8px 4px" }}>
-                                <button type="button" onClick={() => setSelectedId(neo.id)}>
-                                    Info+
-                                </button>
-                                {/* TODO: Favorite button later (needs auth + DB) */}
+                            <td style={{ padding: "8px 4px", textAlign: "center" }}>
+                                <div style={{ display: "flex", alignItems: "center", gap: "8px", justifyContent: "center" }}>
+                                    <button 
+                                        type="button" 
+                                        onClick={() => setSelectedId(neo.id)}
+                                        style={{ padding: "8px 12px", borderRadius: "4px", color: "white", cursor: "pointer" }}
+                                    >
+                                        Info+
+                                    </button>
+                                    <FavoriteButton favorite={{ id: 0, fav_type: "asteroid", media_type: "image", description: neo.name, metadata: neo }} />
+                                </div>
                             </td>
                         </tr>
                     ))}

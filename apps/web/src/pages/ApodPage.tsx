@@ -10,14 +10,16 @@ export default function ApodPage() {
     const { data, loading, error, loadApod } = useApod();
 
     return (
-        <div>
-            <h1>NASA APOD</h1>
+        <div className="w-full px-6 py-8">
+            <div className="max-w-7xl mx-auto">
+                <h1 className="text-4xl font-bold text-white mb-6">NASA APOD</h1>
 
-            <ApodForm onSubmit={(date) => loadApod(date)} loading={loading} />
+                <ApodForm onSubmit={(date) => loadApod(date)} loading={loading} />
 
-            {error && <ErrorMessage message={error} />}
+                {error && <ErrorMessage message={error} />}
 
-            {data && <ApodContent data={data} />}
+                {data && <ApodContent data={data} />}
+            </div>
         </div>
     );
 }
